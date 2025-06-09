@@ -1,0 +1,40 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 基础主题，定义通用样式 -->
+    <style name="Base.Theme.WeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- 让布局延伸到状态栏 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
+    </style>
+
+    <!-- 默认主题 (蓝色系) -->
+    <style name="Theme.WeatherApp" parent="Base.Theme.WeatherApp">
+        <!-- 为自定义属性赋予具体颜色值 -->
+        <item name="gradientStartColor">@color/blue_dark</item>
+        <item name="gradientCenterColor">@color/blue_primary</item>
+        <item name="gradientEndColor">@color/blue_light</item>
+        <item name="iconColor">@color/white</item>
+        <item name="buttonSolidColor">@color/blue_button_solid</item>
+
+        <!-- 新增心情选择颜色 -->
+        <item name="moodDefaultColor">@color/mood_blue_default</item>
+        <item name="moodSelectedColor">@color/mood_blue_selected</item>
+    </style>
+
+    <!-- 新增主题 (紫色系)，用于演示切换 -->
+    <style name="Theme.WeatherApp.Purple" parent="Base.Theme.WeatherApp">
+        <!-- 为自定义属性赋予另一套颜色值 -->
+        <item name="gradientStartColor">@color/purple_dark</item>
+        <item name="gradientCenterColor">@color/purple_primary</item>
+        <item name="gradientEndColor">@color/purple_light</item>
+        <item name="iconColor">@color/white</item>
+        <item name="buttonSolidColor">@color/purple_button_solid</item>
+
+        <!-- 新增心情选择颜色 -->
+        <item name="moodDefaultColor">@color/mood_purple_default</item>
+        <item name="moodSelectedColor">@color/mood_purple_selected</item>
+    </style>
+
+</resources>

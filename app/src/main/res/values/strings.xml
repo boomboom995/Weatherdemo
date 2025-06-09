@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherForecast2</string>
+
+    <!-- 日记插件相关字符串 -->
+    <string name="back_button_description">返回按钮</string>
+    <string name="diary_overview_description">日记总览</string>
+    <string name="add_diary_button_description">添加日记</string>
+    <string name="close_button_description">关闭</string>
+    <string name="mood_prompt_text">Hi, 今天心情怎么样</string>
+    <string name="mood_icon_description">心情图标</string>
+    <string name="selected_mood_description">选中的心情</string>
+    <string name="plan_indicator_description">计划指示器</string>
+    <string name="set_reminder_description">设置提醒</string> <!-- 新增 -->
+    <string name="diary_content_hint">在这里写下您的日记...</string> <!-- 新增 -->
+    <string name="save_diary_button_text">保存日记</string> <!-- 新增 -->
+
+
+    <!-- 星期标题 -->
+    <string name="weekday_sun">日</string>
+    <string name="weekday_mon">一</string>
+    <string name="weekday_tue">二</string>
+    <string name="weekday_wed">三</string>
+    <string name="weekday_thu">四</string>
+    <string name="weekday_fri">五</string>
+    <string name="weekday_sat">六</string>
+
+    <!-- 心情文本 -->
+    <string name="mood_angry_text">生气</string>
+    <string name="mood_excited_text">兴奋</string>
+    <string name="mood_inlove_text">心动</string>
+    <string name="mood_annoyed_text">烦躁</string>
+    <string name="mood_peaceful_text">平静</string>
+    <string name="mood_happy_text">开心</string>
+    <string name="mood_tired_text">心累</string>
+    <string name="mood_sad_text">伤心</string>
+    <string name="mood_sick_text">生病</string>
+    <string name="mood_speechless_text">无语</string>
+    <string name="mood_delicious_text">美味</string>
+    <string name="mood_awful_text">糟糕</string>
+
+
+    <!-- 您应用中可能存在的其他字符串，例如天气预报相关的 -->
+    <string name="shenyang_hunnan">沈阳, 浑南区</string>
+    <string name="today">今天</string>
+    <string name="tomorrow">明天</string>
+    <string name="sunday">周日</string>
+    <string name="cloudy">多云</string>
+    <string name="temp_range_example">16° ~ 32°</string>
+    <string name="snowy">下雪</string>
+    <string name="forecast_15_days">查看近15日天气</string>
+    <string name="today_details">今日详情</string>
+    <string name="mood_emoji_description">高兴！\n</string>
+
+</resources>

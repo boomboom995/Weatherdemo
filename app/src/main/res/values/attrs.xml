@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom attributes for theme colors -->
+    <attr name="gradientStartColor" format="color" />
+    <attr name="gradientCenterColor" format="color" />
+    <attr name="gradientEndColor" format="color" />
+    <attr name="iconColor" format="color" />
+    <attr name="buttonSolidColor" format="color" />
+
+    <!-- Custom attributes for mood selection -->
+    <attr name="moodDefaultColor" format="color" />
+    <attr name="moodSelectedColor" format="color" />
+</resources>

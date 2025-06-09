@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 定义基础色板 -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="grey_800">#FF424242</color>
+    <color name="red_circle">#FD2C2C</color>
+    <color name="mood_blue_selected">#1976D2</color>
+    <!-- 日记-->
+    <color name="weekday_blue">#80007AFF</color>
+    <color name="lunar_text_color">#999999</color>
+    <color name="today_highlight_color">#FFC107</color>
+    <!-- 定义主题A (蓝色系) 的颜色 -->
+    <color name="blue_primary">#1976D2</color>
+    <color name="blue_dark">#0D47A1</color>
+    <color name="blue_light">#42A5F5</color>
+    <color name="blue_button_solid">#1E88E5</color>
+    <color name="mood_blue_default">#1E88E5</color>
+
+    <!-- 定义主题B (紫色系) 的颜色 -->
+    <color name="purple_primary">#5E35B1</color>
+    <color name="purple_dark">#311B92</color>
+    <color name="purple_light">#7E57C2</color>
+    <color name="purple_button_solid">#673AB7</color>
+
+    <color name="mood_purple_default">#673AB7</color>
+    <color name="mood_purple_selected">#673AB7</color>
+
+    <!-- 定义通用的半透明背景 -->
+    <color name="transparent_card_background">#80333E53</color>
+</resources>

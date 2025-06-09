@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/diary_background"
+    tools:context=".Activity.MoodSelectionActivity">
+
+    <LinearLayout
+        android:id="@+id/mood_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#66FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_mood_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="6月8日\n星期天" />
+
+        <ImageView
+            android:id="@+id/iv_close_mood_selection"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:clickable="true"
+            android:contentDescription="@string/close_button_description"
+            android:focusable="true"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_close"
+            app:tint="@color/black" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_mood_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/mood_prompt_text"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mood_header_layout" />
+
+    <ImageView
+        android:id="@+id/iv_selected_mood_center"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:contentDescription="@string/selected_mood_description"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_confirm_mood"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_mood_prompt"
+        app:layout_constraintVertical_bias="0.1"
+        tools:srcCompat="@drawable/ic_mood_happy"
+        tools:visibility="visible" />
+
+    <GridLayout
+        android:id="@+id/mood_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:useDefaultMargins="true"
+        app:layout_constraintBottom_toTopOf="@+id/btn_confirm_mood"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_selected_mood_center">
+
+        <ImageView style="@style/MoodIconStyle" android:tag="开心" app:srcCompat="@drawable/ic_mood_happy" />
+        <ImageView style="@style/MoodIconStyle" android:tag="平静" app:srcCompat="@drawable/ic_mood_quiet" />
+
+        <ImageView
+            style="@style/MoodIconStyle"
+            android:layout_width="44dp"
+            android:tag="兴奋"
+            app:srcCompat="@drawable/ic_mood_excited" />
+        <ImageView style="@style/MoodIconStyle" android:tag="心动" app:srcCompat="@drawable/ic_mood_enjoy" />
+        <ImageView style="@style/MoodIconStyle" android:tag="伤心" app:srcCompat="@drawable/ic_mood_sad" />
+        <ImageView style="@style/MoodIconStyle" android:tag="生气" app:srcCompat="@drawable/ic_mood_awful" />
+        <ImageView style="@style/MoodIconStyle" android:tag="烦躁" app:srcCompat="@drawable/ic_mood_speechless" />
+        <ImageView style="@style/MoodIconStyle" android:tag="心累" app:srcCompat="@drawable/ic_mood_tired" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/btn_confirm_mood"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:padding="12dp"
+        android:text="确认"
+        android:textSize="18sp"
+        app:backgroundTint="?attr/buttonSolidColor"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

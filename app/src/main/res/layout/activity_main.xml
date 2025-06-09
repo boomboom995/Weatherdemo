@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 根布局的 background 会根据主题改变 -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
+    tools:context=".MainActivity">
+
+    <!--
+        图标的 tint 颜色现在从主题中获取 (?attr/iconColor)
+        这意味着您只需要一套白色或透明背景的PNG图标即可。
+    -->
+    <ImageView
+        android:id="@+id/ivSettings"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings"
+        app:tint="?attr/iconColor" />
+
+    <ImageView
+        android:id="@+id/ivDiary"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/ivSettings"
+        app:layout_constraintTop_toTopOf="@+id/ivSettings"
+        app:srcCompat="@drawable/ic_diary"
+        app:tint="?attr/iconColor" />
+
+    <TextView
+        android:id="@+id/tvCurrentTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="16°"
+        android:textColor="@color/white"
+        android:textSize="108sp"
+        app:layout_constraintStart_toStartOf="@+id/tvLocation"
+        app:layout_constraintTop_toBottomOf="@+id/tvLocation" />
+
+    <TextView
+        android:id="@+id/tvWeatherDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="晴 最高25° 最低7°"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/tvCurrentTemp"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTemp" />
+
+    <TextView
+        android:id="@+id/tvHumidityAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="湿度：20     空气良好度：60"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/tvWeatherDetail"
+        app:layout_constraintTop_toBottomOf="@+id/tvWeatherDetail" />
+
+
+    <!-- 天气信息 (此处省略，与之前版本相同) -->
+
+    <!-- ... 其他TextView省略 ... -->
+
+
+    <!-- 底部预报卡片 (此处省略，与之前版本相同) -->
+
+
+    <!--
+        按钮现在使用 MaterialButton，背景颜色由主题属性 ?attr/buttonSolidColor 决定
+        这样就实现了您想要的纯色按钮，并且颜色可随主题变化。
+    -->
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="238dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="56dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/ivDiary"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="沈阳, 浑南区" />
+
+    <Button
+        android:id="@+id/bth_diary"
+        android:layout_width="48dp"
+        android:layout_height="45dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="@+id/ivDiary"
+        app:layout_constraintTop_toTopOf="@+id/ivDiary"></Button>
+
+    <Button
+        android:id="@+id/bth_diary3"
+        android:layout_width="48dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="3dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/ivSettings"
+        app:layout_constraintEnd_toEndOf="@+id/ivSettings"
+        app:layout_constraintStart_toStartOf="@+id/ivSettings"
+        app:layout_constraintTop_toTopOf="@+id/ivSettings"></Button>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/forecastCard"
+        android:layout_width="380dp"
+        android:layout_height="222dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="44dp"
+        app:cardBackgroundColor="@color/transparent_card_background"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- 内部的 LinearLayout 省略 -->
+        <LinearLayout
+            android:id="@+id/la"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="#5EB3E5FC"
+            android:orientation="vertical"
+            android:padding="0dp"
+            android:paddingHorizontal="0dp"
+            android:paddingVertical="0dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingTop="0dp"
+            android:paddingEnd="0dp"
+            android:paddingRight="0dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tvDate3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="周日"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/ivWeatherIcon3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="下雪"
+                    app:srcCompat="@drawable/ic_weather_snowy" />
+
+                <TextView
+                    android:id="@+id/tvWeather3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="多云"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvTempRange3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="end"
+                    android:paddingRight="20dp"
+                    android:text="16° ~ 32°"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tvDate1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="今天"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/ivWeatherIcon1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="天气图标1"
+                    app:srcCompat="@drawable/ic_weather_snowy" />
+
+                <TextView
+                    android:id="@+id/tvWeather1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="多云"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvTempRange1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="end"
+                    android:paddingRight="20dp"
+                    android:text="16° ~ 32°"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tvDate2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="明天"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/ivWeatherIcon2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="天气图标2"
+                    app:srcCompat="@drawable/ic_weather_snowy" />
+
+                <TextView
+                    android:id="@+id/tvWeather2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="多云"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvTempRange2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="end"
+                    android:paddingRight="20dp"
+                    android:text="16° ~ 32°"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <!-- 【修改】按钮1：改用基础Button并移除自定义style -->
+            <Button
+                android:id="@+id/btn15DayForecast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/blue_light"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="查看近15日天气"
+                android:textSize="16sp"
+                app:cornerRadius="24dp"
+                app:rippleColor="#79E4A6" />
+        </LinearLayout>
+
+        <!-- 【修改】按钮2：改用基础Button，移除自定义style，并修复约束 -->
+
+
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTodayDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/blue_light"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="今日详情"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/forecastCard"
+        app:layout_constraintEnd_toEndOf="@+id/forecastCard"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/forecastCard" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

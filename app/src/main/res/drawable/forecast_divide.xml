@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 定义一个1dp高的半透明分隔线 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="line">
+    <stroke
+        android:width="1dp"
+        android:color="#4DFFFFFF" /> <!-- 30% 透明度的白色 -->
+</shape>

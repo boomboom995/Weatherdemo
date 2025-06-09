@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/diary_background">
+
+    <TextView
+        android:id="@+id/tv_edit_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="编辑日记/日程"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="保存"/>
+
+    <LinearLayout
+        android:id="@+id/reminder_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_save"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btn_set_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置提醒"/>
+
+        <TextView
+            android:id="@+id/tv_reminder_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:text="未设置提醒"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_diary_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_edit_title"
+        android:layout_above="@id/reminder_layout"
+        android:gravity="top"
+        android:hint="记录下此刻的心情和未来的计划吧..."
+        android:background="@drawable/rounded_edittext_background"
+        android:padding="12dp" />
+
+</RelativeLayout>

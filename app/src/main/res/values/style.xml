@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 基础应用主题，请根据您的实际主题名进行调整 -->
+    <!-- 确保您的主题继承自 MaterialComponents 或 AppCompat 系列主题 -->
+    <style name="Theme.WeatherForecast2" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- 请确保您的主题也包含了对自定义属性的引用，例如： -->
+        <item name="gradientStartColor">@color/blue_dark</item>
+        <item name="gradientCenterColor">@color/blue_primary</item>
+        <item name="gradientEndColor">@color/blue_light</item>
+        <item name="iconColor">@color/white</item>
+        <item name="buttonSolidColor">@color/blue_button_solid</item>
+        <item name="moodDefaultColor">@color/mood_blue_default</item>
+        <item name="moodSelectedColor">@color/mood_blue_selected</item>
+    </style>
+
+    <!-- 用于心情选项的父 LinearLayout 样式 -->
+    <style name="MoodOptionStyle">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <!-- 心情图标样式 -->
+    <style name="MoodIconStyle">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:contentDescription">@string/mood_icon_description</item>
+<!--        <item name="app:tint">?attr/moodDefaultColor</item> &lt;!&ndash; 默认使用主题中的颜色 &ndash;&gt;-->
+    </style>
+
+    <!-- 心情文本样式 -->
+    <style name="MoodTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginTop">2dp</item>
+    </style>
+
+    <!-- 周天文字样式 -->
+    <style name="WeekdayTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

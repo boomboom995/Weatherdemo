@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/iv_list_item_mood"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="心情图标"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_mood_happy" />
+
+        <TextView
+            android:id="@+id/tv_list_item_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/iv_list_item_menu"
+            app:layout_constraintStart_toEndOf="@id/iv_list_item_mood"
+            app:layout_constraintTop_toTopOf="@id/iv_list_item_mood"
+            tools:text="2025年6月8日" />
+
+        <TextView
+            android:id="@+id/tv_list_item_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:maxLines="5"
+            android:ellipsize="end"
+            android:textColor="@color/grey_800"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_list_item_date"
+            app:layout_constraintTop_toBottomOf="@id/tv_list_item_date"
+            tools:text="今天天气真好，心情也很棒！写下这篇日记记录美好的一天。希望明天也一样开心，加油！" />
+
+        <ImageView
+            android:id="@+id/iv_list_item_menu"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="更多操作"
+            android:focusable="true"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/grey_800" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

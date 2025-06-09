@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingVertical="4dp">
+
+    <TextView
+        android:id="@+id/tv_day_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/tv_lunar_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/lunar_text_color"
+        android:textSize="10sp"
+        tools:text="初一" />
+
+    <FrameLayout
+        android:id="@+id/mood_plan_circle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="2dp">
+
+        <ImageView
+            android:id="@+id/iv_mood_emoji"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:srcCompat="@drawable/ic_mood_happy" />
+
+        <TextView
+            android:id="@+id/tv_rest_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="休"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+</LinearLayout>
