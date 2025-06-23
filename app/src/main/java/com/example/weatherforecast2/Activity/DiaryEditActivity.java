@@ -1,6 +1,7 @@
 // 文件路径: app/src/main/java/com/example/weatherforecast2/Activity/DiaryEditActivity.java
 package com.example.weatherforecast2.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -114,6 +115,7 @@ public class DiaryEditActivity extends AppCompatActivity {
         finish();
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private void setAlarm(DiaryEntry entry) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
