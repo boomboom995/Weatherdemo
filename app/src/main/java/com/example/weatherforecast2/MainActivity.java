@@ -151,10 +151,9 @@ public class MainActivity extends AppCompatActivity {
             tvTempRange2.setText(formatTemperature(tomorrow.getLow()) + " ~ " + formatTemperature(tomorrow.getHigh()));
             ivWeatherIcon2.setImageResource(getWeatherIconResource(tomorrow.getType()));
 
-            // 后天
+            // 后天（显示星期几）
             Forecast afterTomorrow = dailyForecasts.get(2);
-            // 从 "09日星期一" 提取 "星期一"
-            tvDate3.setText(extractDayOfWeek(afterTomorrow.getDate()));
+            tvDate3.setText(afterTomorrow.getWeek());
             tvWeather3.setText(afterTomorrow.getType());
             tvTempRange3.setText(formatTemperature(afterTomorrow.getLow()) + " ~ " + formatTemperature(afterTomorrow.getHigh()));
             ivWeatherIcon3.setImageResource(getWeatherIconResource(afterTomorrow.getType()));

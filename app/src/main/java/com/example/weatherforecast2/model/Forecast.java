@@ -7,6 +7,7 @@ public class Forecast {
     private String type;
     private String fx; // 风向
     private String fl; // 风力
+    private String week;
 
     // Getters
     public String getDate() { return date; }
@@ -15,4 +16,5 @@ public class Forecast {
     public String getType() { return type; }
     public String getFx() { return fx; }
     public String getFl() { return fl; }
+    public String getWeek() { return week; }
 }
