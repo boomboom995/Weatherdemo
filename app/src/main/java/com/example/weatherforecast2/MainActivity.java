@@ -1,6 +1,7 @@
 package com.example.weatherforecast2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -15,6 +16,8 @@ import com.example.weatherforecast2.Activity.DiaryActivity;
 import com.example.weatherforecast2.model.Forecast;
 import com.example.weatherforecast2.model.Weather;
 import com.google.gson.Gson;
+import com.example.weatherforecast2.util.WeatherApiHelper;
+import com.example.weatherforecast2.util.LocationHelper;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,6 +27,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     // 要查询的城市代码，例如北京是 "101010100"
     private final String cityCode = "101010100";
 
+    private final String PREFS_NAME = "weather";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +53,45 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
+        // 启动时优先用本地保存的城市
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String cityId = sp.getString("cityId", "101070101"); // 默认沈阳
+        String cityName = sp.getString("cityName", "沈阳");
+        tvLocation.setText(cityName);
+        loadWeather(cityId);
+
         Button btnOpenDiary = findViewById(R.id.bth_diary);
         btnOpenDiary.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
             startActivity(intent);
         });
 
-        fetchWeather();
+        // 城市管理入口
+        ImageView ivSettings = findViewById(R.id.ivSettings);
+        ivSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, com.example.weatherforecast2.Activity.CityManagerActivity.class);
+            startActivity(intent);
+        });
+
+        // 城市选择入口，点击城市名可切换城市
+        tvLocation.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, com.example.weatherforecast2.Activity.CitySelectionActivity.class);
+            startActivityForResult(intent, 1001);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            String cityId = data.getStringExtra("cityId");
+            String cityName = data.getStringExtra("cityName");
+            Log.d("WeatherAppDebug", "切换城市: " + cityName + " cityId=" + cityId);
+            SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            sp.edit().putString("cityId", cityId).putString("cityName", cityName).apply();
+            tvLocation.setText(cityName);
+            loadWeather(cityId);
+        }
     }
 
     private void initViews() {
@@ -74,93 +113,66 @@ public class MainActivity extends AppCompatActivity {
         ivWeatherIcon3 = findViewById(R.id.ivWeatherIcon3);
     }
 
-    private void fetchWeather() {
-        Log.d(TAG, "开始获取天气数据...");
-        OkHttpClient client = new OkHttpClient();
-        // 使用新的API地址
-        String url = "http://t.weather.itboy.net/api/weather/city/" + cityCode;
-        Request request = new Request.Builder().url(url).build();
-
-        client.newCall(request).enqueue(new Callback() {
+    private void loadWeather(String cityId) {
+        WeatherApiHelper.getWeather7d(cityId, new okhttp3.Callback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "天气获取失败: ", e);
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "天气数据获取失败", Toast.LENGTH_SHORT).show());
+            public void onFailure(okhttp3.Call call, IOException e) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "天气获取失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
-
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    final String responseBody = response.body().string();
-                    Log.d(TAG, "天气API成功返回: " + responseBody);
-                    Gson gson = new Gson();
-                    final Weather weather = gson.fromJson(responseBody, Weather.class);
-                    runOnUiThread(() -> {
-                        if (weather != null && weather.getStatus().equals("200")) {
-                            Log.d(TAG, "天气数据解析成功，准备更新UI");
-                            updateUI(weather);
-                        } else {
-                            Log.e(TAG, "天气API返回错误: " + (weather != null ? weather.getMessage() : "Response is null"));
-                            Toast.makeText(MainActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    try {
+                        String body = response.body().string();
+                        runOnUiThread(() -> updateUI(body));
+                    } catch (Exception e) {
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "解析天气失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
                 } else {
-                    Log.e(TAG, "天气请求不成功: " + response.code());
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "天气接口错误: HTTP " + response.code(), Toast.LENGTH_SHORT).show());
                 }
             }
         });
     }
 
-    private void updateUI(Weather weather) {
-        Log.d(TAG, "正在更新UI...");
+    private void updateUI(String body) {
+        try {
+            JSONObject obj = new JSONObject(body);
+            JSONObject cityInfo = obj.getJSONObject("cityInfo");
+            JSONObject data = obj.getJSONObject("data");
+            String cityName = cityInfo.getString("city");
+            String temp = data.getString("wendu");
+            String humidity = data.getString("shidu");
+            String quality = data.getString("quality");
+            JSONArray forecast = data.getJSONArray("forecast");
 
-        // 更新地点
-        tvLocation.setText(weather.getCityInfo().getCity());
-
-        // 更新实时天气
-        if (weather.getData() != null) {
-            tvCurrentTemp.setText(weather.getData().getWendu() + "°");
-
-            List<Forecast> forecasts = weather.getData().getForecast();
-            if (forecasts != null && !forecasts.isEmpty()) {
-                Forecast todayForecast = forecasts.get(0);
-                tvWeatherDetail.setText(
-                        todayForecast.getType() + " " +
-                                formatTemperature(todayForecast.getHigh()) + " / " +
-                                formatTemperature(todayForecast.getLow())
-                );
-            }
-            tvHumidityAir.setText("提示: " + weather.getData().getGanmao());
-        }
-
-        // 更新天气预报
-        if (weather.getData() != null && weather.getData().getForecast() != null && weather.getData().getForecast().size() >= 3) {
-            List<Forecast> dailyForecasts = weather.getData().getForecast();
+            tvLocation.setText(cityName);
+            tvCurrentTemp.setText(temp + "°");
+            tvHumidityAir.setText("湿度：" + humidity + "  空气质量：" + quality);
 
             // 今天
-            Forecast today = dailyForecasts.get(0);
+            JSONObject today = forecast.getJSONObject(0);
             tvDate1.setText("今天");
-            tvWeather1.setText(today.getType());
-            tvTempRange1.setText(formatTemperature(today.getLow()) + " ~ " + formatTemperature(today.getHigh()));
-            ivWeatherIcon1.setImageResource(getWeatherIconResource(today.getType()));
+            tvWeather1.setText(today.getString("type"));
+            tvTempRange1.setText(today.getString("low") + " ~ " + today.getString("high"));
+            ivWeatherIcon1.setImageResource(getWeatherIconResource(today.getString("type")));
 
             // 明天
-            Forecast tomorrow = dailyForecasts.get(1);
+            JSONObject tomorrow = forecast.getJSONObject(1);
             tvDate2.setText("明天");
-            tvWeather2.setText(tomorrow.getType());
-            tvTempRange2.setText(formatTemperature(tomorrow.getLow()) + " ~ " + formatTemperature(tomorrow.getHigh()));
-            ivWeatherIcon2.setImageResource(getWeatherIconResource(tomorrow.getType()));
+            tvWeather2.setText(tomorrow.getString("type"));
+            tvTempRange2.setText(tomorrow.getString("low") + " ~ " + tomorrow.getString("high"));
+            ivWeatherIcon2.setImageResource(getWeatherIconResource(tomorrow.getString("type")));
 
-            // 后天（显示星期几）
-            Forecast afterTomorrow = dailyForecasts.get(2);
-            tvDate3.setText(afterTomorrow.getWeek());
-            tvWeather3.setText(afterTomorrow.getType());
-            tvTempRange3.setText(formatTemperature(afterTomorrow.getLow()) + " ~ " + formatTemperature(afterTomorrow.getHigh()));
-            ivWeatherIcon3.setImageResource(getWeatherIconResource(afterTomorrow.getType()));
-
-            Log.d(TAG, "UI更新完毕！");
-        } else {
-            Log.e(TAG, "天气预报数据不足3天！");
+            // 后天
+            JSONObject afterTomorrow = forecast.getJSONObject(2);
+            tvDate3.setText("后天");
+            tvWeather3.setText(afterTomorrow.getString("type"));
+            tvTempRange3.setText(afterTomorrow.getString("low") + " ~ " + afterTomorrow.getString("high"));
+            ivWeatherIcon3.setImageResource(getWeatherIconResource(afterTomorrow.getString("type")));
+        } catch (Exception e) {
+            Log.e("WeatherAPI", "天气数据显示异常", e);
+            Toast.makeText(this, "天气数据显示异常", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -179,12 +191,18 @@ public class MainActivity extends AppCompatActivity {
         return temp;
     }
 
-    private String extractDayOfWeek(String date) {
-        // 从 "09日星期一" 中提取 "星期一"
-        if(date != null && date.contains("星期")) {
-            return date.substring(date.indexOf("星期"));
+    private String getWeekday(String dateStr) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+            java.util.Date date = sdf.parse(dateStr);
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(date);
+            int dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK);
+            String[] weekDays = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+            return weekDays[dayOfWeek - 1];
+        } catch (Exception e) {
+            return dateStr;
         }
-        return date;
     }
 
     private int getWeatherIconResource(String weatherType) {

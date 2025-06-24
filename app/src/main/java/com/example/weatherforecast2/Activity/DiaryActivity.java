@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +36,7 @@ import com.example.weatherforecast2.MainActivity;
 import com.example.weatherforecast2.R;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.weatherforecast2.util.PerformanceMonitor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +44,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.CalendarClickListener {
 
@@ -51,6 +56,11 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
     private DiaryDatabaseHelper dbHelper;
     private FloatingActionButton fabAddDiary, fabAddReminder;
     private ImageView ivPrevMonth, ivNextMonth;
+    
+    // 性能优化相关
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private boolean isRefreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +83,20 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
         ivNextMonth = findViewById(R.id.iv_next_month);
         currentMonthCalendar = Calendar.getInstance();
 
+        // 优化RecyclerView性能
+        setupRecyclerView();
+
         ivPrevMonth.setOnClickListener(v -> {
-            currentMonthCalendar.add(Calendar.MONTH, -1);
-            refreshCalendar();
+            if (!isRefreshing) {
+                currentMonthCalendar.add(Calendar.MONTH, -1);
+                refreshCalendarAsync();
+            }
         });
         ivNextMonth.setOnClickListener(v -> {
-            currentMonthCalendar.add(Calendar.MONTH, 1);
-            refreshCalendar();
+            if (!isRefreshing) {
+                currentMonthCalendar.add(Calendar.MONTH, 1);
+                refreshCalendarAsync();
+            }
         });
         tvMonthYear.setOnClickListener(v -> showMonthYearPicker());
         fabAddDiary.setOnClickListener(v -> {
@@ -88,7 +105,10 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
             startActivity(intent);
         });
         fabAddReminder.setOnClickListener(v -> showAddReminderDialog());
-        setupCalendar();
+        
+        // 异步初始化日历
+        refreshCalendarAsync();
+        
         Button b = findViewById(R.id.bth_diarytomain);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +117,19 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
                 startActivity(intent);
             }
         });
+    }
+
+    private void setupRecyclerView() {
+        // 性能优化配置
+        calendarRecyclerView.setHasFixedSize(true);
+        calendarRecyclerView.setItemViewCacheSize(42); // 缓存所有日期项
+        calendarRecyclerView.setDrawingCacheEnabled(true);
+        calendarRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 7);
+        layoutManager.setItemPrefetchEnabled(true);
+        layoutManager.setInitialPrefetchItemCount(42);
+        calendarRecyclerView.setLayoutManager(layoutManager);
     }
 
     private void showAddReminderDialog() {
@@ -148,7 +181,7 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
                     entry.setId((int) id);
 
                     setAlarm(entry);
-                    refreshCalendar();
+                    refreshCalendarAsync();
                 })
                 .setNegativeButton("取消", (dialog, which) -> dialog.cancel());
         builder.create().show();
@@ -187,20 +220,49 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
     @Override
     protected void onResume() {
         super.onResume();
-        refreshCalendar();
+        refreshCalendarAsync();
     }
 
-    private void setupCalendar() {
-        calendarRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
-        refreshCalendar();
-    }
-
-    private void refreshCalendar() {
-        List<Date> days = getDaysInMonth(currentMonthCalendar);
-        SimpleDateFormat monthYearFormat = new SimpleDateFormat("yyyy年 MM月", Locale.getDefault());
-        tvMonthYear.setText(monthYearFormat.format(currentMonthCalendar.getTime()));
-        calendarAdapter = new CalendarAdapter(this, days, currentMonthCalendar, this);
-        calendarRecyclerView.setAdapter(calendarAdapter);
+    // 异步刷新日历，避免主线程阻塞
+    private void refreshCalendarAsync() {
+        if (isRefreshing) return;
+        
+        PerformanceMonitor.startOperation("refreshCalendarAsync");
+        isRefreshing = true;
+        executorService.execute(() -> {
+            try {
+                PerformanceMonitor.checkMainThread();
+                long startTime = System.currentTimeMillis();
+                
+                List<Date> days = getDaysInMonth(currentMonthCalendar);
+                SimpleDateFormat monthYearFormat = new SimpleDateFormat("yyyy年 MM月", Locale.getDefault());
+                String monthYearText = monthYearFormat.format(currentMonthCalendar.getTime());
+                
+                long dataPrepTime = System.currentTimeMillis() - startTime;
+                PerformanceMonitor.logOperation("数据准备", dataPrepTime);
+                
+                mainHandler.post(() -> {
+                    PerformanceMonitor.checkMainThread();
+                    long uiStartTime = System.currentTimeMillis();
+                    
+                    tvMonthYear.setText(monthYearText);
+                    calendarAdapter = new CalendarAdapter(this, days, currentMonthCalendar, this);
+                    calendarRecyclerView.setAdapter(calendarAdapter);
+                    
+                    long uiTime = System.currentTimeMillis() - uiStartTime;
+                    PerformanceMonitor.logOperation("UI更新", uiTime);
+                    
+                    isRefreshing = false;
+                    PerformanceMonitor.endOperation();
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    Toast.makeText(this, "日历加载失败", Toast.LENGTH_SHORT).show();
+                    isRefreshing = false;
+                    PerformanceMonitor.endOperation();
+                });
+            }
+        });
     }
 
     private void showMonthYearPicker() {
@@ -210,7 +272,7 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
         final MaterialDatePicker<Long> datePicker = builder.build();
         datePicker.addOnPositiveButtonClickListener(selection -> {
             currentMonthCalendar.setTimeInMillis(selection);
-            refreshCalendar();
+            refreshCalendarAsync();
         });
         datePicker.show(getSupportFragmentManager(), "MONTH_YEAR_PICKER");
     }
@@ -244,5 +306,11 @@ public class DiaryActivity extends AppCompatActivity implements CalendarAdapter.
         }
         intent.putExtra("selected_date", selectedDateStr);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
     }
 }
