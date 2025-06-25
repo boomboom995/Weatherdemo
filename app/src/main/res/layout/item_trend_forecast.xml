@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:background="@android:color/transparent">
+
+    <!-- 日期/星期 -->
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="今天"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:gravity="start"/>
+
+    <!-- 天气图标 -->
+    <ImageView
+        android:id="@+id/ivWeatherIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_weather_sunny"/>
+
+    <!-- 天气类型 -->
+    <TextView
+        android:id="@+id/tvWeatherType"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="晴"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_marginStart="16dp"
+        android:gravity="start"/>
+
+    <!-- 空白占位，让温度靠右对齐 -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1"/>
+
+    <!-- 高温 -->
+    <TextView
+        android:id="@+id/tvTempHigh"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="36°"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <!-- 温度分隔符 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" / "
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <!-- 低温 -->
+    <TextView
+        android:id="@+id/tvTempLow"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="22°"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:gravity="center"/>
+
+    <!-- 空气质量 -->
+    <TextView
+        android:id="@+id/tvAqi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="良"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:background="@drawable/circle_background_template"
+        android:layout_marginStart="16dp"
+        android:padding="6dp"/>
+
+</LinearLayout> 

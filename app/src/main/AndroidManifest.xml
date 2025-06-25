@@ -36,6 +36,8 @@
         <activity android:name=".Activity.MoodSelectionActivity" />
         <activity android:name=".Activity.CitySelectionActivity" />
         <activity android:name=".Activity.CityManagerActivity" />
+        <activity android:name=".Activity.TodayDetailActivity" />
+        <activity android:name=".Activity.TrendForecastActivity" />
 
         <receiver
             android:name=".AlarmReceiver"

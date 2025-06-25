@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherforecast2.Activity.DiaryActivity;
 import com.example.weatherforecast2.model.Forecast;
@@ -18,6 +21,9 @@ import com.example.weatherforecast2.model.Weather;
 import com.google.gson.Gson;
 import com.example.weatherforecast2.util.WeatherApiHelper;
 import com.example.weatherforecast2.util.LocationHelper;
+import com.example.weatherforecast2.Adapter.WeatherForecastAdapter;
+import com.example.weatherforecast2.Adapter.WeatherHourlyAdapter;
+import com.example.weatherforecast2.Adapter.SeniverseHourlyAdapter;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvDate2, tvWeather2, tvTempRange2;
     private TextView tvDate3, tvWeather3, tvTempRange3;
     private ImageView ivWeatherIcon1, ivWeatherIcon2, ivWeatherIcon3;
+    private RecyclerView rvForecast;
+    private WeatherForecastAdapter forecastAdapter;
+    private RecyclerView rvHourly;
+    private WeatherHourlyAdapter hourlyAdapter;
 
     // 要查询的城市代码，例如北京是 "101010100"
     private final String cityCode = "101010100";
@@ -51,11 +61,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String cityId = sp.getString("cityId", "101070101"); // 只定义一次
+
         initViews();
 
         // 启动时优先用本地保存的城市
-        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String cityId = sp.getString("cityId", "101070101"); // 默认沈阳
         String cityName = sp.getString("cityName", "沈阳");
         tvLocation.setText(cityName);
         loadWeather(cityId);
@@ -78,6 +89,26 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, com.example.weatherforecast2.Activity.CitySelectionActivity.class);
             startActivityForResult(intent, 1001);
         });
+
+        // 今日详情按钮
+        Button btnTodayDetail = findViewById(R.id.btnTodayDetail);
+        if (btnTodayDetail != null) {
+            btnTodayDetail.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, com.example.weatherforecast2.Activity.TodayDetailActivity.class);
+                intent.putExtra("cityId", cityId);
+                startActivity(intent);
+            });
+        }
+
+        // 15天趋势预报按钮
+        Button btnMore = findViewById(R.id.btn15DayForecast);
+        if (btnMore != null) {
+            btnMore.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, com.example.weatherforecast2.Activity.TrendForecastActivity.class);
+                intent.putExtra("cityId", cityId);
+                startActivity(intent);
+            });
+        }
     }
 
     @Override
@@ -111,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
         tvWeather3 = findViewById(R.id.tvWeather3);
         tvTempRange3 = findViewById(R.id.tvTempRange3);
         ivWeatherIcon3 = findViewById(R.id.ivWeatherIcon3);
+        rvForecast = findViewById(R.id.rvForecast);
+        rvForecast.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvHourly = findViewById(R.id.rvHourly);
+        rvHourly.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     private void loadWeather(String cityId) {
@@ -135,6 +170,44 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // 获取逐时天气数据
+    private void loadHourlyWeather(String cityName) {
+        Log.d("WeatherAPI", "开始获取逐时天气，城市: " + cityName);
+        WeatherApiHelper.getHourlyWeather(cityName, new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                Log.e("WeatherAPI", "逐时天气获取失败: " + e.getMessage());
+                runOnUiThread(() -> {
+                    // 隐藏逐时天气视图，不影响主界面
+                    rvHourly.setVisibility(View.GONE);
+                });
+            }
+            
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String body = response.body().string();
+                        Log.d("WeatherAPI", "逐时天气响应成功: " + body);
+                        runOnUiThread(() -> updateHourlyUI(body));
+                    } catch (Exception e) {
+                        Log.e("WeatherAPI", "解析逐时天气失败: " + e.getMessage());
+                        runOnUiThread(() -> rvHourly.setVisibility(View.GONE));
+                    }
+                } else {
+                    String errorBody = "";
+                    try {
+                        errorBody = response.body() != null ? response.body().string() : "";
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    Log.e("WeatherAPI", "逐时天气接口错误: HTTP " + response.code() + ", 响应: " + errorBody);
+                    runOnUiThread(() -> rvHourly.setVisibility(View.GONE));
+                }
+            }
+        });
+    }
+
     private void updateUI(String body) {
         try {
             JSONObject obj = new JSONObject(body);
@@ -145,34 +218,88 @@ public class MainActivity extends AppCompatActivity {
             String humidity = data.getString("shidu");
             String quality = data.getString("quality");
             JSONArray forecast = data.getJSONArray("forecast");
+            JSONArray hourly = data.optJSONArray("hourly");
 
+            // 更新城市名
             tvLocation.setText(cityName);
+            
+            // 更新当前温度
             tvCurrentTemp.setText(temp + "°");
+            
+            // 更新天气详情（从今日预报获取更详细信息）
+            JSONObject today = forecast.getJSONObject(0);
+            String todayType = today.getString("type");
+            String high = today.getString("high").replaceAll("[^0-9]", "");
+            String low = today.getString("low").replaceAll("[^0-9]", "");
+            tvWeatherDetail.setText(todayType + " 最高" + high + "° 最低" + low + "°");
+            
+            // 更新湿度和空气质量
             tvHumidityAir.setText("湿度：" + humidity + "  空气质量：" + quality);
 
-            // 今天
-            JSONObject today = forecast.getJSONObject(0);
+            // 多日天气列表
+            if (forecastAdapter == null) {
+                forecastAdapter = new WeatherForecastAdapter(this, forecast);
+                rvForecast.setAdapter(forecastAdapter);
+            } else {
+                rvForecast.setAdapter(new WeatherForecastAdapter(this, forecast));
+            }
+
+            // 逐小时天气列表 - 使用心知天气API获取
+            // 暂时注释，避免API限制影响主界面
+            // loadHourlyWeather(cityName);
+
+            // 今天卡片
             tvDate1.setText("今天");
-            tvWeather1.setText(today.getString("type"));
+            tvWeather1.setText(todayType);
             tvTempRange1.setText(today.getString("low") + " ~ " + today.getString("high"));
-            ivWeatherIcon1.setImageResource(getWeatherIconResource(today.getString("type")));
+            ivWeatherIcon1.setImageResource(getWeatherIconResource(todayType));
 
-            // 明天
-            JSONObject tomorrow = forecast.getJSONObject(1);
-            tvDate2.setText("明天");
-            tvWeather2.setText(tomorrow.getString("type"));
-            tvTempRange2.setText(tomorrow.getString("low") + " ~ " + tomorrow.getString("high"));
-            ivWeatherIcon2.setImageResource(getWeatherIconResource(tomorrow.getString("type")));
+            // 明天卡片
+            if (forecast.length() > 1) {
+                JSONObject tomorrow = forecast.getJSONObject(1);
+                tvDate2.setText("明天");
+                tvWeather2.setText(tomorrow.getString("type"));
+                tvTempRange2.setText(tomorrow.getString("low") + " ~ " + tomorrow.getString("high"));
+                ivWeatherIcon2.setImageResource(getWeatherIconResource(tomorrow.getString("type")));
+            }
 
-            // 后天
-            JSONObject afterTomorrow = forecast.getJSONObject(2);
-            tvDate3.setText("后天");
-            tvWeather3.setText(afterTomorrow.getString("type"));
-            tvTempRange3.setText(afterTomorrow.getString("low") + " ~ " + afterTomorrow.getString("high"));
-            ivWeatherIcon3.setImageResource(getWeatherIconResource(afterTomorrow.getString("type")));
+            // 后天卡片
+            if (forecast.length() > 2) {
+                JSONObject afterTomorrow = forecast.getJSONObject(2);
+                tvDate3.setText("后天");
+                tvWeather3.setText(afterTomorrow.getString("type"));
+                tvTempRange3.setText(afterTomorrow.getString("low") + " ~ " + afterTomorrow.getString("high"));
+                ivWeatherIcon3.setImageResource(getWeatherIconResource(afterTomorrow.getString("type")));
+            }
+            
         } catch (Exception e) {
             Log.e("WeatherAPI", "天气数据显示异常", e);
             Toast.makeText(this, "天气数据显示异常", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 处理心知天气API的逐时天气数据
+    private void updateHourlyUI(String body) {
+        try {
+            JSONObject obj = new JSONObject(body);
+            JSONArray results = obj.getJSONArray("results");
+            if (results.length() > 0) {
+                JSONObject result = results.getJSONObject(0);
+                JSONArray hourly = result.getJSONArray("hourly");
+                
+                // 显示逐时天气RecyclerView
+                rvHourly.setVisibility(View.VISIBLE);
+                
+                // 创建心知天气格式的适配器
+                SeniverseHourlyAdapter seniverseAdapter = new SeniverseHourlyAdapter(this, hourly);
+                rvHourly.setAdapter(seniverseAdapter);
+                
+                Log.d("WeatherAPI", "逐时天气数据更新成功，共" + hourly.length() + "小时");
+            }
+        } catch (Exception e) {
+            Log.e("WeatherAPI", "逐时天气UI更新异常", e);
+            // 隐藏逐时天气视图
+            rvHourly.setVisibility(View.GONE);
         }
     }
 

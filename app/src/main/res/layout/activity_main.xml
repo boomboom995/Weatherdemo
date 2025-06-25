@@ -342,4 +342,28 @@
         app:layout_constraintTop_toTopOf="@+id/tvLocation"
         app:srcCompat="@drawable/ic_location" />
 
+    <!-- 未来多日天气RecyclerView（暂时隐藏，避免重复显示） -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvForecast"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btnTodayDetail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@android:color/transparent"/>
+
+    <!-- 逐小时天气RecyclerView（暂时隐藏，避免重复显示） -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHourly"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/rvForecast"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@android:color/transparent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
