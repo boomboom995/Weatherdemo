@@ -23,9 +23,9 @@ public class TrendForecastActivity extends AppCompatActivity {
     private RecyclerView rvTrendForecast;
     private TrendForecastAdapter trendAdapter;
     private TrendLineChartView trendLineChart;
-    private TextView tvTitle;
+    private TextView tvTitle, tvCityName;
     private ImageView btnBack;
-    private String cityId;
+    private String cityId, cityName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +36,12 @@ public class TrendForecastActivity extends AppCompatActivity {
         setupRecyclerView();
         
         cityId = getIntent().getStringExtra("cityId");
+        cityName = getIntent().getStringExtra("cityName");
         if (cityId == null) cityId = "101010100"; // 默认北京
+        if (cityName == null) cityName = "北京";
+        
+        // 显示城市名
+        tvCityName.setText(cityName);
         
         loadTrendForecast(cityId);
     }
@@ -45,6 +50,7 @@ public class TrendForecastActivity extends AppCompatActivity {
         rvTrendForecast = findViewById(R.id.rvTrendForecast);
         trendLineChart = findViewById(R.id.trendLineChart);
         tvTitle = findViewById(R.id.tvTitle);
+        tvCityName = findViewById(R.id.tvCityName);
         btnBack = findViewById(R.id.btnBack);
         
         btnBack.setOnClickListener(v -> finish());
@@ -52,7 +58,13 @@ public class TrendForecastActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        rvTrendForecast.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        // 改为水平滚动布局
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvTrendForecast.setLayoutManager(layoutManager);
+        
+        // 优化滚动性能
+        rvTrendForecast.setHasFixedSize(true);
+        rvTrendForecast.setItemViewCacheSize(20);
     }
 
     private void loadTrendForecast(String cityId) {
@@ -68,8 +80,12 @@ public class TrendForecastActivity extends AppCompatActivity {
                     try {
                         String body = response.body().string();
                         JSONObject obj = new JSONObject(body);
+                        JSONObject cityInfo = obj.getJSONObject("cityInfo");
                         JSONObject data = obj.getJSONObject("data");
                         JSONArray forecast = data.getJSONArray("forecast");
+                        
+                        // 更新城市名（如果API返回了城市信息）
+                        String apiCityName = cityInfo.optString("city", cityName);
                         
                         // 取前15天（如果不足15天就显示全部）
                         JSONArray trend15 = new JSONArray();
@@ -78,6 +94,7 @@ public class TrendForecastActivity extends AppCompatActivity {
                         }
                         
                         runOnUiThread(() -> {
+                            tvCityName.setText(apiCityName);
                             trendAdapter = new TrendForecastAdapter(TrendForecastActivity.this, trend15);
                             rvTrendForecast.setAdapter(trendAdapter);
                             trendLineChart.setForecastArray(trend15);

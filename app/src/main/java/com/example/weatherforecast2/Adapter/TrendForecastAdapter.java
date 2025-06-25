@@ -24,7 +24,7 @@ public class TrendForecastAdapter extends RecyclerView.Adapter<TrendForecastAdap
     @NonNull
     @Override
     public TrendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_trend_card, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_trend_forecast, parent, false);
         return new TrendViewHolder(view);
     }
 
@@ -33,54 +33,63 @@ public class TrendForecastAdapter extends RecyclerView.Adapter<TrendForecastAdap
         try {
             JSONObject day = forecastArray.getJSONObject(position);
             
-            // 日期格式化，参考竞品图1
+            // 日期格式化
             String dateText = formatDate(day.optString("ymd", ""), day.optString("week", ""), position);
             holder.tvDate.setText(dateText);
             
-            // 天气类型
-            String type = day.optString("type", "晴");
-            holder.tvWeatherType.setText(type);
-            
-            // 高温（顶部显示）
+            // 高温和低温
             String high = day.optString("high", "0").replaceAll("[^0-9]", "");
-            holder.tvTempHigh.setText(high + "°");
-            
-            // 低温（底部显示）
             String low = day.optString("low", "0").replaceAll("[^0-9]", "");
+            holder.tvTempHigh.setText(high + "°");
             holder.tvTempLow.setText(low + "°");
             
-            // 空气质量
-            String aqi = day.optString("aqi", "良");
-            holder.tvAqi.setText(aqi);
-            
             // 天气图标
+            String type = day.optString("type", "晴");
             holder.ivWeatherIcon.setImageResource(getWeatherIconResource(type));
+            
+            // "今天"高亮效果
+            if (position == 0) {
+                holder.todayHighlight.setVisibility(View.VISIBLE);
+                // 增强今天的文字颜色
+                holder.tvDate.setTextColor(0xFFFFFFFF);
+                holder.tvTempHigh.setTextColor(0xFFFFD54F);
+                holder.tvTempLow.setTextColor(0xFF81D4FA);
+            } else {
+                holder.todayHighlight.setVisibility(View.GONE);
+                // 普通颜色
+                holder.tvDate.setTextColor(0xE0FFFFFF);
+                holder.tvTempHigh.setTextColor(0xD0FFD54F);
+                holder.tvTempLow.setTextColor(0xD081D4FA);
+            }
             
         } catch (Exception e) {
             // 默认值
             holder.tvDate.setText("--");
-            holder.tvWeatherType.setText("--");
             holder.tvTempHigh.setText("--°");
             holder.tvTempLow.setText("--°");
-            holder.tvAqi.setText("--");
             holder.ivWeatherIcon.setImageResource(R.drawable.ic_weather_sunny);
+            holder.todayHighlight.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return forecastArray.length();
+        return Math.min(forecastArray.length(), 15); // 限制最多显示15天
     }
 
     private String formatDate(String ymd, String week, int position) {
         if (position == 0) return "今天";
         if (position == 1) return "明天";
+        if (position == 2) return "后天";
         
         // 解析日期显示月日格式
         if (ymd.length() >= 8) {
             String month = ymd.substring(4, 6);
             String day = ymd.substring(6, 8);
-            return month + "月" + day + "日";
+            // 去掉前导0
+            int monthInt = Integer.parseInt(month);
+            int dayInt = Integer.parseInt(day);
+            return monthInt + "/" + dayInt;
         }
         
         if (!week.isEmpty()) return week;
@@ -88,17 +97,17 @@ public class TrendForecastAdapter extends RecyclerView.Adapter<TrendForecastAdap
     }
 
     static class TrendViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDate, tvWeatherType, tvTempHigh, tvTempLow, tvAqi;
+        TextView tvDate, tvTempHigh, tvTempLow;
         ImageView ivWeatherIcon;
+        View todayHighlight;
         
         public TrendViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tvDate);
-            tvWeatherType = itemView.findViewById(R.id.tvWeatherType);
             tvTempHigh = itemView.findViewById(R.id.tvTempHigh);
             tvTempLow = itemView.findViewById(R.id.tvTempLow);
-            tvAqi = itemView.findViewById(R.id.tvAqi);
             ivWeatherIcon = itemView.findViewById(R.id.ivWeatherIcon);
+            todayHighlight = itemView.findViewById(R.id.todayHighlight);
         }
     }
 

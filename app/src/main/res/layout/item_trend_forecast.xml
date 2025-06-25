@@ -1,87 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:padding="16dp"
+    android:layout_width="60dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp"
     android:background="@android:color/transparent">
 
-    <!-- 日期/星期 -->
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text="今天"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:gravity="start"/>
-
-    <!-- 天气图标 -->
-    <ImageView
-        android:id="@+id/ivWeatherIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/ic_weather_sunny"/>
-
-    <!-- 天气类型 -->
-    <TextView
-        android:id="@+id/tvWeatherType"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:text="晴"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:layout_marginStart="16dp"
-        android:gravity="start"/>
-
-    <!-- 空白占位，让温度靠右对齐 -->
+    <!-- "今天"高亮背景框 - 默认隐藏 -->
     <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1"/>
+        android:id="@+id/todayHighlight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/today_highlight_background"
+        android:visibility="gone" />
 
-    <!-- 高温 -->
-    <TextView
-        android:id="@+id/tvTempHigh"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="36°"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:gravity="center"/>
-
-    <!-- 温度分隔符 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" / "
-        android:textColor="@color/white"
-        android:textSize="16sp"/>
-
-    <!-- 低温 -->
-    <TextView
-        android:id="@+id/tvTempLow"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="22°"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:gravity="center"/>
-
-    <!-- 空气质量 -->
-    <TextView
-        android:id="@+id/tvAqi"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="良"
-        android:textColor="@color/white"
-        android:textSize="12sp"
+    <!-- 内容容器 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/circle_background_template"
-        android:layout_marginStart="16dp"
-        android:padding="6dp"/>
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- 日期/星期 -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="今天"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:shadowColor="#40000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2" />
+
+        <!-- 天气图标 -->
+        <ImageView
+            android:id="@+id/ivWeatherIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:src="@drawable/ic_weather_sunny"
+            android:contentDescription="天气图标" />
+
+        <!-- 高温 -->
+        <TextView
+            android:id="@+id/tvTempHigh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="28°"
+            android:textColor="#FFD54F"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:shadowColor="#40000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2" />
+
+        <!-- 连接点（可选的小圆点） -->
+        <View
+            android:layout_width="2dp"
+            android:layout_height="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="#80FFFFFF" />
+
+        <!-- 低温 -->
+        <TextView
+            android:id="@+id/tvTempLow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15°"
+            android:textColor="#81D4FA"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:shadowColor="#40000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2" />
+
+    </LinearLayout>
 
 </LinearLayout> 

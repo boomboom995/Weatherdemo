@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 主背景渐变：深空蓝到天蓝色 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#1a237e"
+                android:centerColor="#3949ab"
+                android:endColor="#42a5f5"
+                android:type="linear" />
+        </shape>
+    </item>
+    
+    <!-- 网格层：增加科技感和精确度 -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="0.5dp"
+                android:color="#10FFFFFF"
+                android:dashWidth="4dp"
+                android:dashGap="20dp" />
+        </shape>
+    </item>
+    
+    <!-- 顶部光晕效果 -->
+    <item android:top="-100dp" android:left="-100dp" android:right="-100dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#20FFFFFF"
+                android:centerColor="#15FFFFFF"
+                android:endColor="#00FFFFFF"
+                android:type="radial"
+                android:gradientRadius="300dp" />
+        </shape>
+    </item>
+    
+    <!-- 底部柔和阴影 -->
+    <item android:bottom="-50dp" android:left="-50dp" android:right="-50dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#00000000"
+                android:centerColor="#15000000"
+                android:endColor="#25000000"
+                android:type="radial"
+                android:gradientRadius="250dp" />
+        </shape>
+    </item>
+</layer-list> 
